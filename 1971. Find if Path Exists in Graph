@@ -1,0 +1,45 @@
+class Solution {
+public:
+// bool DFS(vector<vector<int>>& edges, int n, int v1, int v2, bool *visited){
+//         if(v1==v2)return true;
+//         visited[v1]=true;
+//         for(int i=0;i<n;i++){
+//             if(i==v1)continue;
+//             if(edges[v1][i] && !visited[i]){
+//                 if(DFS(edges, n, i, v2, visited))return true;
+//             }
+//         }
+//         return false;
+//     }
+//     bool validPath(int n, vector<vector<int>>& edges, int v1, int v2) {
+//         bool* visited = new bool[n];
+//         for(int i=0; i<n; i++){
+//             visited[i]=false;
+//         }
+//         return DFS(edges, n, v1, v2, visited)? true:false;
+//     }
+    bool validPath(int n, vector<vector<int>>& edges, int start, int end) {
+        vector<vector<int>> graph(n);
+        for(int i=0; i<edges.size(); i++) {
+            graph[edges[i][0]].push_back(edges[i][1]);
+            graph[edges[i][1]].push_back(edges[i][0]);
+        }
+        queue<int> q;
+        vector<int> visited(n, 0);
+        q.push(start);
+        visited[start] = 1;
+        while(!q.empty()){
+            int top = q.front();
+            q.pop();
+            if(top == end)
+                return true;
+            for(int i=0; i<graph[top].size(); i++){
+                if(visited[graph[top][i]] == 0){
+                    q.push(graph[top][i]);
+                    visited[graph[top][i]] = 1;
+                }
+            }
+        }
+        return false;
+    }
+};
