@@ -1,0 +1,45 @@
+class Solution {
+public:
+    
+    int minimumTime(int n, vector<vector<int>>& mat, vector<int>& time) {
+        // make a adj list such that edge points from the next node to prev node
+        vector<int> adj[n+1];
+        for(auto it : mat)
+        {
+            int prev = it[0], next = it[1];
+            adj[next].push_back(prev);
+        }
+        
+        // Now, we know that for every node, its children are prerequisite
+        // So the earlist we can start the doing current course is when 
+        // all its children(prerequisites) are finished
+        
+        // Here, dp[i] is the lowest time take to complete ith course
+        
+        vector<int> dp(n+1,-1);
+        for(int i = 1; i <= n; i++)
+        {
+            if(dp[i] == -1)
+                dp[i] = dfs(i,adj,time,dp);
+        }
+        
+        // among the least times taken to complete each course... take max
+        return *max_element(dp.begin(), dp.end());
+    }
+    
+    int dfs(int node, const vector<int> adj[], const vector<int>& time, vector<int>& dp)
+    {
+        if(dp[node] != -1) return dp[node];
+        
+        // we can only start a perticular course when all the children (prerequisites)
+        // are finish
+        int timeToStart = 0;
+        for(int child : adj[node])
+        {
+            timeToStart = max(timeToStart, dfs(child, adj, time, dp));
+        }
+        
+        // time to complete the course = timeToStart + timeToComplete
+        return dp[node] = (timeToStart + time[node-1]);
+    }
+};
